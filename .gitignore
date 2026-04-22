@@ -1,0 +1,20 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.venv/
+
+# Environment
+.env
+pipeline_debug.log
+pipeline.log
+
+# Project Specific
+downloads/
+browser_profile_uc/
+Manga/
+
+# OS
+.DS_Store
+Thumbs.db

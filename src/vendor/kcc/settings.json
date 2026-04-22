@@ -1,0 +1,6 @@
+{
+    "to_pdf": true,
+    "delete_images": false,
+    "concurrency": 5,
+    "output_dir": "downloads"
+}
