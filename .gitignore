@@ -10,6 +10,11 @@ venv/
 pipeline_debug.log
 pipeline.log
 
+# Build artifacts (PyInstaller)
+build/
+dist/
+*.manifest
+
 # Project Specific
 downloads/
 browser_profile_uc/
@@ -18,3 +23,6 @@ Manga/
 # OS
 .DS_Store
 Thumbs.db
+
+# MD
+CLAUDE.md

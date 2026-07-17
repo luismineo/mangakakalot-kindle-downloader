@@ -8,9 +8,15 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 # pyrefly: ignore [missing-import]
 from selenium.webdriver.support import expected_conditions as EC
+# pyrefly: ignore [missing-import]
+from selenium.common.exceptions import TimeoutException
 
 from src.core.models import Manga, Chapter
 from src.utils import sanitize_name
+
+IMG_SELECTOR = ".chapter-image-container img, .container-chapter-reader img, #vungdoc img"
+READER_TIMEOUT_SECONDS = 15
+
 
 class MangakakalotScraper:
     def __init__(self, browser_manager):
@@ -75,14 +81,30 @@ class MangakakalotScraper:
         return chapters
 
     def extract_img_urls(self) -> list:
+        self._wait_for_reader()
         soup = BeautifulSoup(self.browser.page_source, "lxml")
         urls = []
-        tags = soup.select(
-            ".chapter-image-container img, .container-chapter-reader img, #vungdoc img"
-        )
+        tags = soup.select(IMG_SELECTOR)
         for t in tags:
             src = t.get("data-src") or t.get("src")
             if src and "data:" not in src and "logo" not in src.lower():
                 if src not in urls:
                     urls.append(src)
         return urls
+
+    def _wait_for_reader(self) -> None:
+        """Espera o leitor renderizar, em vez de dormir um tempo fixo.
+
+        O site entrega as URLs de todas as páginas em `data-src` já no HTML, então
+        basta o container existir — não é preciso aguardar as imagens carregarem.
+        Substitui um `time.sleep(2)` por capítulo (~6s num mangá de 3 capítulos).
+        """
+        try:
+            WebDriverWait(self.browser, READER_TIMEOUT_SECONDS).until(
+                EC.presence_of_element_located((By.CSS_SELECTOR, IMG_SELECTOR))
+            )
+        except TimeoutException:
+            logging.warning(
+                "Reader images did not appear within "
+                f"{READER_TIMEOUT_SECONDS}s; parsing whatever rendered."
+            )

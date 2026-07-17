@@ -1,0 +1,4 @@
+-r requirements.txt
+
+# Só para gerar o executável (build.ps1). Não é necessário para rodar o projeto.
+pyinstaller>=6.10.0

@@ -4,6 +4,8 @@ import re
 import logging
 # pyrefly: ignore [missing-import]
 import undetected_chromedriver as uc
+# pyrefly: ignore [missing-import]
+from selenium.common.exceptions import WebDriverException
 from src.config import PROFILE_PATH
 
 class BrowserManager:
@@ -59,9 +61,10 @@ class BrowserManager:
             logging.info("Starting ChromeDriver with self-detection version.")
             return uc.Chrome(options=options, user_data_dir=str(PROFILE_PATH), use_subprocess=True)
 
-    def close(self):
-        try:
-            self.driver.close()
-            self.driver.quit()
-        except:
-            pass
+    def close(self) -> None:
+        """Encerra o driver. Sempre chamado em `finally`; nunca deve propagar erro."""
+        for step in (self.driver.close, self.driver.quit):
+            try:
+                step()
+            except (WebDriverException, OSError) as exc:
+                logging.debug(f"Driver teardown ({step.__name__}) ignored: {exc}")
