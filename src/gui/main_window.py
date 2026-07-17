@@ -27,6 +27,7 @@ from src.config import BASE_DIR, DEFAULT_WORKERS
 from src.core.pipeline import PipelineConfig
 from src.gui.profiles import DEFAULT_PROFILE, kindle_profiles
 from src.gui.worker import PipelineWorker, QtReporter
+from src.version import display_version
 
 # Duas paletas de log: as cores precisam ter contraste tanto no tema claro quanto
 # no escuro. Tons fixos pensados para fundo claro somem por completo no escuro.
@@ -152,6 +153,11 @@ class MainWindow(QWidget):
         buttons.addWidget(self.start_button)
 
         layout.addLayout(buttons)
+
+        footer = QLabel(f"v{display_version()}")
+        footer.setObjectName("subheading")
+        footer.setAlignment(Qt.AlignmentFlag.AlignRight)
+        layout.addWidget(footer)
 
     def _resolve_colors(self) -> dict[str, str]:
         """Escolhe a paleta de log conforme o tema em uso pelo sistema."""

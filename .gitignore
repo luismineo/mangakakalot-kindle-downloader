@@ -15,6 +15,9 @@ build/
 dist/
 *.manifest
 
+# Release zips (release.ps1)
+release/
+
 # Project Specific
 downloads/
 browser_profile_uc/
